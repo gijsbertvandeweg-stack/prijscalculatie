@@ -1,11 +1,591 @@
 <!DOCTYPE html>
-<html>
+<html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0; url=./prijscalculatie.html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#4caf50">
+    <meta name="description" content="QP Prijscalculatie tool voor marge berekeningen">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Prijscalculatie">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%234caf50' width='180' height='180'/><text x='50%' y='50%' font-size='80' font-weight='bold' fill='white' text-anchor='middle' dominant-baseline='middle'>P</text></svg>">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%234caf50' width='192' height='192'/><text x='50%' y='50%' font-size='80' font-weight='bold' fill='white' text-anchor='middle' dominant-baseline='middle'>P</text></svg>">
     <title>Prijscalculatie</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e9e9e9 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .qp-badge {
+            background: #f0f0f0;
+            color: #888;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        button {
+            background: #f0f0f0;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+            color: #666;
+        }
+
+        button:hover {
+            background: #e0e0e0;
+        }
+
+        button.primary {
+            background: #4caf50;
+            color: white;
+        }
+
+        button.primary:hover {
+            background: #45a049;
+        }
+
+        .tooltip {
+            position: relative;
+            cursor: help;
+            border-bottom: 1px dotted #999;
+            display: inline;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #333;
+            color: #fff;
+            text-align: left;
+            border-radius: 6px;
+            padding: 8px 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 12px;
+            white-space: normal;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .tooltip .tooltiptext::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #333 transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .header-actions {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            input {
+                width: 100px !important;
+                font-size: 14px;
+            }
+
+            .tooltip .tooltiptext {
+                width: 150px;
+                margin-left: -75px;
+            }
+        }
+
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 20px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: #ffc107;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-end;
+            gap: 12px;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-group.full {
+            flex-wrap: wrap;
+        }
+
+        label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1a1a1a;
+            display: block;
+            margin-bottom: 8px;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        input {
+            padding: 10px 12px;
+            border: none;
+            background: #f0f0f0;
+            border-radius: 6px;
+            font-size: 16px;
+            width: 120px;
+            text-align: right;
+            color: #1a1a1a;
+            font-weight: 500;
+        }
+
+        input:focus {
+            outline: none;
+            background: #e8e8e8;
+        }
+
+        .currency {
+            color: #888;
+            font-size: 14px;
+            margin-right: 4px;
+        }
+
+        .percent {
+            color: #888;
+            font-size: 14px;
+            margin-left: 4px;
+        }
+
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .result-section {
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%);
+            border: 2px solid #4caf50;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .result-item {
+            text-align: center;
+        }
+
+        .result-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #2d6a4f;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .result-value {
+            font-size: 28px;
+            font-weight: 600;
+            color: #1b5e20;
+        }
+
+        .result-value.currency::after {
+            content: '€';
+            font-size: 20px;
+            margin-left: 2px;
+        }
+
+        .result-value.percent::after {
+            content: '%';
+            margin-left: 2px;
+        }
+
+        .calc-section {
+            background: #f9f9f9;
+            border-left: 4px solid #4caf50;
+            padding: 16px;
+            margin-bottom: 16px;
+            border-radius: 4px;
+        }
+
+        .calc-section-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .calc-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .calc-row:last-child {
+            border-bottom: none;
+        }
+
+        .calc-label {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .calc-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .calc-value.currency::after {
+            content: '€';
+            font-size: 13px;
+            margin-left: 2px;
+        }
+
+        .calc-value.percent::after {
+            content: '%';
+            margin-left: 2px;
+        }
+    </style>
 </head>
 <body>
-    <p><a href="/prijscalculatie.html">Klik hier als je niet automatisch wordt doorgestuurd</a></p>
+    <div class="container">
+        <div class="header">
+            <h1>Prijscalculatie</h1>
+            <div class="header-actions">
+                <div class="qp-badge">QP</div>
+                <button onclick="resetForm()">Reset</button>
+                <button class="primary" onclick="exportResults()">Export</button>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Invoer</div>
+
+            <div class="form-group full">
+                <label>Naam artikel</label>
+                <input type="text" id="artikelNaam" placeholder="Artikelnaam" style="width: 100%; flex: 1;">
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <span class="tooltip">
+                        VVP QP
+                        <span class="tooltiptext">Verkoopverpakkingsprijs op basis van Queen's Products</span>
+                    </span>
+                </label>
+                <div class="input-wrapper">
+                    <span class="currency">€</span>
+                    <input type="number" id="inkoopprijs" value="2.480" step="0.001">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <span class="tooltip">
+                        Factuurprijs QP
+                        <span class="tooltiptext">Prijs op factuur van Queen's Products</span>
+                    </span>
+                </label>
+                <div class="input-wrapper">
+                    <span class="currency">€</span>
+                    <input type="number" id="factuurprijs" value="2.900" step="0.001">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <span class="tooltip">
+                        CAP (incl. BTW)
+                        <span class="tooltiptext">Consumentenadviesprijs inclusief belasting</span>
+                    </span>
+                </label>
+                <div class="input-wrapper">
+                    <span class="currency">€</span>
+                    <input type="number" id="cap" value="3.99" step="0.01">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <span class="tooltip">
+                        Condities
+                        <span class="tooltiptext">Kortingspercentage of voorwaarden</span>
+                    </span>
+                </label>
+                <div class="input-wrapper">
+                    <input type="number" id="conditie" value="4.36" step="0.01">
+                    <span class="percent">%</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <span class="tooltip">
+                        BTW
+                        <span class="tooltiptext">Belasting op toegevoegde waarde</span>
+                    </span>
+                </label>
+                <div class="input-wrapper">
+                    <select id="btw" style="padding: 10px 12px; border: none; background: #f0f0f0; border-radius: 6px; font-size: 16px; font-weight: 500; color: #1a1a1a; cursor: pointer;">
+                        <option value="9">9%</option>
+                        <option value="21">21%</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="result-section">
+            <div class="result-grid">
+                <div class="result-item">
+                    <div class="result-label">Absolute marge (na conditie)</div>
+                    <div class="result-value currency" id="absMarge">0.29</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-label">Marge QP %</div>
+                    <div class="result-value percent" id="margeQPPercent">10.1</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="calc-section">
+                <div class="calc-section-title">SU / ALDI / LIDL — EXCL. BTW</div>
+                <div class="calc-row">
+                    <span class="calc-label">Absolute marge excl. BTW</span>
+                    <span class="calc-value currency" id="suAbsMarge">0.76</span>
+                </div>
+                <div class="calc-row">
+                    <span class="calc-label">Marge retailer %</span>
+                    <span class="calc-value percent" id="suMargePercent">20.8</span>
+                </div>
+            </div>
+
+            <div class="calc-section">
+                <div class="calc-section-title">AH METHODE — EXCL. BTW / CAP INCL. BTW</div>
+                <div class="calc-row">
+                    <span class="calc-label">Absolute marge excl. BTW</span>
+                    <span class="calc-value currency" id="ahAbsMarge">0.76</span>
+                </div>
+                <div class="calc-row">
+                    <span class="calc-label">Marge retailer %</span>
+                    <span class="calc-value percent" id="ahMargePercent">19.1</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const defaults = {
+            inkoopprijs: '0',
+            factuurprijs: '0',
+            cap: '0',
+            conditie: '4.36',
+            btw: '9',
+            artikelNaam: ''
+        };
+
+        const inputs = {
+            artikelNaam: document.getElementById('artikelNaam'),
+            inkoopprijs: document.getElementById('inkoopprijs'),
+            factuurprijs: document.getElementById('factuurprijs'),
+            cap: document.getElementById('cap'),
+            conditie: document.getElementById('conditie'),
+            btw: document.getElementById('btw')
+        };
+
+        const results = {
+            absMarge: document.getElementById('absMarge'),
+            margeQPPercent: document.getElementById('margeQPPercent'),
+            suAbsMarge: document.getElementById('suAbsMarge'),
+            suMargePercent: document.getElementById('suMargePercent'),
+            ahAbsMarge: document.getElementById('ahAbsMarge'),
+            ahMargePercent: document.getElementById('ahMargePercent')
+        };
+
+        function calculateAll() {
+            const inkoopprijs = parseFloat(inputs.inkoopprijs.value) || 0;
+            const factuurprijs = parseFloat(inputs.factuurprijs.value) || 0;
+            const cap = parseFloat(inputs.cap.value) || 0;
+            const conditie = parseFloat(inputs.conditie.value) || 0;
+            const btw = parseFloat(inputs.btw.value) || 0;
+
+            // Inkoopprijs retailer na conditie
+            const inkoopprijs_na_conditie = factuurprijs * (1 - (conditie / 100));
+
+            // Marge QP berekeningen
+            const absMarge = inkoopprijs_na_conditie - inkoopprijs;
+            const margeQPPercent = inkoopprijs > 0 ? ((absMarge / inkoopprijs) * 100) : 0;
+
+            // CAP excl. en incl. BTW
+            const capExclBTW = cap / (1 + (btw / 100));
+
+            // SU/ALDI/LIDL berekeningen - marge % op basis van CAP excl. BTW
+            const suAbsMarge = capExclBTW - inkoopprijs_na_conditie;
+            const suMargePercent = capExclBTW > 0 ? ((suAbsMarge / capExclBTW) * 100) : 0;
+
+            // AH Methode berekeningen - marge % op basis van CAP incl. BTW
+            const ahAbsMarge = capExclBTW - inkoopprijs_na_conditie;
+            const ahMargePercent = cap > 0 ? ((ahAbsMarge / cap) * 100) : 0;
+
+            // Update resultaten
+            results.absMarge.textContent = absMarge.toFixed(2);
+            results.margeQPPercent.textContent = margeQPPercent.toFixed(1);
+            results.suAbsMarge.textContent = suAbsMarge.toFixed(2);
+            results.suMargePercent.textContent = suMargePercent.toFixed(1);
+            results.ahAbsMarge.textContent = ahAbsMarge.toFixed(2);
+            results.ahMargePercent.textContent = ahMargePercent.toFixed(1);
+        }
+
+        function resetForm() {
+            Object.keys(defaults).forEach(key => {
+                inputs[key].value = defaults[key];
+            });
+            calculateAll();
+        }
+
+        function exportResults() {
+            const artikelNaam = inputs.artikelNaam.value || 'Product';
+            const inkoopprijs = inputs.inkoopprijs.value;
+            const factuurprijs = inputs.factuurprijs.value;
+            const cap = inputs.cap.value;
+            const conditie = inputs.conditie.value;
+            const btw = inputs.btw.value;
+
+            const csv = [
+                ['Prijscalculatie Export'],
+                [],
+                ['Artikel:', artikelNaam],
+                [],
+                ['INVOER'],
+                ['VVP QP', '€' + inkoopprijs],
+                ['Factuurprijs QP', '€' + factuurprijs],
+                ['CAP (incl. BTW)', '€' + cap],
+                ['Condities', conditie + '%'],
+                ['BTW', btw + '%'],
+                [],
+                ['RESULTATEN'],
+                ['Absolute marge (na conditie)', '€' + results.absMarge.textContent],
+                ['Marge QP %', results.margeQPPercent.textContent + '%'],
+                [],
+                ['SU / ALDI / LIDL — EXCL. BTW'],
+                ['Absolute marge excl. BTW', '€' + results.suAbsMarge.textContent],
+                ['Marge retailer %', results.suMargePercent.textContent + '%'],
+                [],
+                ['AH METHODE — EXCL. BTW / CAP INCL. BTW'],
+                ['Absolute marge excl. BTW', '€' + results.ahAbsMarge.textContent],
+                ['Marge retailer %', results.ahMargePercent.textContent + '%']
+            ].map(row => row.join(';')).join('\n');
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `prijscalculatie_${artikelNaam}_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+        }
+
+        Object.values(inputs).forEach(input => {
+            input.addEventListener('input', calculateAll);
+        });
+
+        calculateAll();
+
+        // PWA Service Worker registration
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(err => {
+                console.log('Service Worker registration failed:', err);
+            });
+        }
+    </script>
 </body>
 </html>
