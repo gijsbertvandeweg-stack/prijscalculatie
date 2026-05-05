@@ -2,7 +2,7 @@
   "name": "Prijscalculatie",
   "short_name": "Prijscalculatie",
   "description": "QP Prijscalculatie tool voor marge berekeningen",
-  "start_url": "/prijscalculatie.html",
+  "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
