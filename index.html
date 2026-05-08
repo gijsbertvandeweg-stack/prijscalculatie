@@ -511,7 +511,7 @@
             const capExclBTW = cap / (1 + (btw / 100));
 
             // SU/ALDI/LIDL berekeningen - marge % op basis van CAP excl. BTW
-            const suAbsMarge = capExclBTW - inkoopprijs_na_conditie;
+            const ahAbsMarge = capExclBTW - inkoopprijs_na_conditie;
             const suMargePercent = capExclBTW > 0 ? ((suAbsMarge / capExclBTW) * 100) : 0;
 
             // AH Methode berekeningen - marge % op basis van CAP incl. BTW
