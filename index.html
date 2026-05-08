@@ -500,25 +500,18 @@
             const conditie = parseFloat(inputs.conditie.value) || 0;
             const btw = parseFloat(inputs.btw.value) || 0;
 
-            // Inkoopprijs retailer na conditie
             const inkoopprijs_na_conditie = factuurprijs * (1 - (conditie / 100));
-
-            // Marge QP berekeningen
-            const absMarge = inkoopprijs_na_conditie - inkoopprijs;
-           const margeQPPercent = factuurprijs > 0 ? ((absMarge / factuurprijs) * 100) : 0;
-
-            // CAP excl. en incl. BTW
             const capExclBTW = cap / (1 + (btw / 100));
 
-            // SU/ALDI/LIDL berekeningen - marge % op basis van CAP excl. BTW
-            const ahAbsMarge = capExclBTW - factuurprijs_na_conditie;
+            const absMarge = inkoopprijs_na_conditie - inkoopprijs;
+            const margeQPPercent = factuurprijs > 0 ? ((absMarge / factuurprijs) * 100) : 0;
+
+            const suAbsMarge = capExclBTW - factuurprijs;
             const suMargePercent = capExclBTW > 0 ? ((suAbsMarge / capExclBTW) * 100) : 0;
 
-            // AH Methode berekeningen - marge % op basis van CAP incl. BTW
-            const ahAbsMarge = capExclBTW - factuurprijs_na_conditie;
+            const ahAbsMarge = capExclBTW - factuurprijs;
             const ahMargePercent = cap > 0 ? ((ahAbsMarge / cap) * 100) : 0;
 
-            // Update resultaten
             results.absMarge.textContent = absMarge.toFixed(3);
             results.margeQPPercent.textContent = margeQPPercent.toFixed(1);
             results.suAbsMarge.textContent = suAbsMarge.toFixed(2);
@@ -580,7 +573,6 @@
 
         calculateAll();
 
-        // PWA Service Worker registration
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js').catch(err => {
                 console.log('Service Worker registration failed:', err);
