@@ -413,7 +413,7 @@
             <div class="result-grid">
                 <div class="result-item">
                     <div class="result-label">Absolute marge (na conditie)</div>
-                    <div class="result-value currency" id="absMarge">0.29</div>
+                    <div class="result-value currency" id="absMarge">0,29</div>
                 </div>
                 <div class="result-item">
                     <div class="result-label">Marge QP %</div>
@@ -496,7 +496,7 @@
             const ahAbsMarge = capExclBTW - factuurprijs;
             const ahMargePercent = cap > 0 ? ((ahAbsMarge / cap) * 100) : 0;
 
-            results.absMarge.textContent = absMarge.toFixed(3);
+            results.absMarge.textContent = absMarge.toFixed(3).replace('.', ',');
             results.margeQPPercent.textContent = margeQPPercent.toFixed(1);
             results.suAbsMarge.textContent = suAbsMarge.toFixed(2);
             results.suMargePercent.textContent = suMargePercent.toFixed(1);
