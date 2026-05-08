@@ -427,7 +427,7 @@
                 <div class="calc-section-title">SU / ALDI / LIDL — EXCL. BTW</div>
                 <div class="calc-row">
                     <span class="calc-label">Absolute marge excl. BTW</span>
-                    <span class="calc-value currency" id="suAbsMarge">0.76</span>
+                    <span class="calc-value currency" id="suAbsMarge">0,76</span>
                 </div>
                 <div class="calc-row">
                     <span class="calc-label">Marge retailer %</span>
@@ -439,7 +439,7 @@
                 <div class="calc-section-title">AH METHODE — EXCL. BTW / CAP INCL. BTW</div>
                 <div class="calc-row">
                     <span class="calc-label">Absolute marge excl. BTW</span>
-                    <span class="calc-value currency" id="ahAbsMarge">0.76</span>
+                    <span class="calc-value currency" id="ahAbsMarge">0,76</span>
                 </div>
                 <div class="calc-row">
                     <span class="calc-label">Marge retailer %</span>
@@ -498,9 +498,9 @@
 
             results.absMarge.textContent = absMarge.toFixed(3).replace('.', ',');
             results.margeQPPercent.textContent = margeQPPercent.toFixed(1);
-            results.suAbsMarge.textContent = suAbsMarge.toFixed(2);
+            results.suAbsMarge.textContent = suAbsMarge.toFixed(2).replace('.', ',');
             results.suMargePercent.textContent = suMargePercent.toFixed(1);
-            results.ahAbsMarge.textContent = ahAbsMarge.toFixed(2);
+            results.ahAbsMarge.textContent = ahAbsMarge.toFixed(2).replace('.', ',');
             results.ahMargePercent.textContent = ahMargePercent.toFixed(1);
         }
 
