@@ -505,7 +505,7 @@
 
             // Marge QP berekeningen
             const absMarge = inkoopprijs_na_conditie - inkoopprijs;
-            const margeQPPercent = inkoopprijs > 0 ? ((absMarge / inkoopprijs) * 100) : 0;
+            const margeQPPercent = inkoopprijs_na_conditie > 0 ? ((absMarge / inkoopprijs_na_conditie) * 100) : 0;
 
             // CAP excl. en incl. BTW
             const capExclBTW = cap / (1 + (btw / 100));
